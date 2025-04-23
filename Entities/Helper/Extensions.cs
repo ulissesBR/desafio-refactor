@@ -1,14 +1,8 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-
-namespace MedidorTCP.Entities
+﻿namespace MedidorTCP.Entities.Extensions
 {
     public static class Extensions
     {
-        public static byte checksum(this byte[] buf)
+        public static byte Checksum(this byte[] buf)
         {
             byte checksum = 0x00;
 

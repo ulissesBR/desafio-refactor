@@ -44,29 +44,27 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="CsvWriter.cs" />
-    <Compile Include="Entities\ArgumentData.cs" />
-    <Compile Include="Entities\BufferData.cs" />
-    <Compile Include="Entities\CSVHandler.cs" />
-    <Compile Include="Entities\Extensions.cs" />
-    <Compile Include="Entities\Functions.cs" />
-    <Compile Include="Entities\IClientHandler.cs" />
-    <Compile Include="Entities\IOutputHandler.cs" />
-    <Compile Include="Entities\IMessageHandler.cs" />
-    <Compile Include="Entities\Message.cs" />
-    <Compile Include="Entities\MessageHandler.cs" />
-    <Compile Include="Entities\Operations.cs" />
-    <Compile Include="Entities\Payload.cs" />
-    <Compile Include="Entities\RegistroStatus.cs" />
-    <Compile Include="Entities\TCPHandler.cs" />
-    <Compile Include="FrameBuilder.cs" />
+    <Compile Include="Entities\UserInputHandle\ArgumentData.cs" />
+    <Compile Include="Entities\Protocol\Buffer.cs" />
+    <Compile Include="Entities\FileUtilities\CSVHandler.cs" />
+    <Compile Include="Entities\Helper\Extensions.cs" />
+    <Compile Include="Entities\TCP\IClientHandler.cs" />
+    <Compile Include="Entities\Protocol\IOutputHandler.cs" />
+    <Compile Include="Entities\Protocol\IMessageHandler.cs" />
+    <Compile Include="Entities\Protocol\Message.cs" />
+    <Compile Include="Entities\Protocol\MessageHandler.cs" />
+    <Compile Include="Entities\Driver\Operations.cs" />
+    <Compile Include="Entities\Protocol\Payload.cs" />
+    <Compile Include="Entities\Driver\RegistroStatus.cs" />
+    <Compile Include="Entities\TCP\TCPHandler.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="TcpClientHandler.cs" />
+    <Compile Include="Entities\TCP\TcpClientHandler.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="App.config" />
   </ItemGroup>
+  <ItemGroup />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.

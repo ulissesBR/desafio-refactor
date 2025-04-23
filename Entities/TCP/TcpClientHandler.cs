@@ -2,13 +2,11 @@
 using System.Collections.Generic;
 using System.IO;
 using System.Net.Sockets;
-using System.Text;
 using System.Threading;
-using MedidorTCP.Entities;
+using MedidorTCP.Entities.Driver;
+using Buffer = MedidorTCP.Entities.Protocol.Buffer;
 
-using Buffer = MedidorTCP.Entities.Buffer;
-
-namespace MedidorTCP
+namespace MedidorTCP.Entities.TCP
 {
     class TcpClientHandler
     {
@@ -47,7 +45,7 @@ namespace MedidorTCP
         }
 
         public void LerNumeroDeSerie()
-        {         
+        {
             byte[] payload = { 0x7D, 0x00, 0x01 };
             Buffer buffer = ExchangeMessage(payload, 256);
 
@@ -149,7 +147,7 @@ namespace MedidorTCP
 
                 byte checksum = buffer.Checksum();
                 byte checksumRecebido = buffer.LastByte();
-              
+
                 if (checksum == checksumRecebido)
                 {
                     if (buffer.IsDataHora())
@@ -161,12 +159,12 @@ namespace MedidorTCP
                         Console.WriteLine("Erro na leitura da data/hora.");
                     }
                 }
-                
+
                 tentativas--;
                 Thread.Sleep(50);
                 Console.WriteLine("Erro de checksum ao ler data e hora");
             }
-            
+
             return "Falha ao ler a data e hora após múltiplas tentativas";
         }
 
@@ -271,7 +269,7 @@ namespace MedidorTCP
                 else
                 {
                     // Não tá bonito:
-                    Console.WriteLine(string.Format("ERRO ao configurar registro {0}:\n\tBytes lidos: {1}/5; Resposta: {2}/0x83; Status: {3}/0x00.\n\tTentativas Restantes: {4}", indice, buffer.BytesRead, buffer.Function().ToString("X2"), buffer.BufferData[3].ToString("X2"), tentativas-1));
+                    Console.WriteLine(string.Format("ERRO ao configurar registro {0}:\n\tBytes lidos: {1}/5; Resposta: {2}/0x83; Status: {3}/0x00.\n\tTentativas Restantes: {4}", indice, buffer.BytesRead, buffer.Function().ToString("X2"), buffer.BufferData[3].ToString("X2"), tentativas - 1));
                 }
                 tentativas--;
                 Thread.Sleep(50);

@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace MedidorTCP.Entities
+namespace MedidorTCP.Entities.Protocol
 {
 
     public class Buffer

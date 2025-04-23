@@ -1,9 +1,11 @@
 ﻿using System;
-using System.Net.Sockets;
-using System.Text;
-using System.IO;
 using System.Collections;
-using MedidorTCP.Entities;
+using System.IO;
+using MedidorTCP.Entities.Driver;
+using MedidorTCP.Entities.FileUtilities;
+using MedidorTCP.Entities.Protocol;
+using MedidorTCP.Entities.TCP;
+using MedidorTCP.Entities.UserInputHandle;
 
 namespace MedidorTCP
 {
@@ -27,11 +29,11 @@ namespace MedidorTCP
 
             Operations operations;
 
-            Console.WriteLine("Conectando-se ao servidor ({0} - porta {1})... ", arguments.ip, arguments.port);
+            Console.WriteLine("Conectando-se ao servidor ({0} - porta {1})... ", arguments.Ip, arguments.Port);
 
             try
             {
-                clientHandler = new TCPHandler(arguments.ip, arguments.port);
+                clientHandler = new TCPHandler(arguments.Ip, arguments.Port);
 
                 outputHandler = new CSVHandler("OutputEnergia");
                 messageHandler = new MessageHandler(clientHandler);
@@ -42,9 +44,9 @@ namespace MedidorTCP
                 operations.LerNumeroDeSerie(); // Lemos o número de série primeiro
 
                 // TODO: CONFERIR ISSO! E se os indices forem, efetivamente, 0?
-                if (arguments.firstIndex > 0 && arguments.lastIndex > 0)
+                if (arguments.FirstIndex > 0 && arguments.LastIndex > 0)
                 {
-                    operations.LerRegistros((ushort)arguments.firstIndex, (ushort)arguments.lastIndex);
+                    operations.LerRegistros((ushort)arguments.FirstIndex, (ushort)arguments.LastIndex);
                 }
 
                 clientHandler.Close();     // Lidos os dados, fechamos a conexão.
@@ -67,7 +69,7 @@ namespace MedidorTCP
             }
 
             return readFile(args[0]);
-        
+
         }
 
         private static ArrayList readFile(String fileName)

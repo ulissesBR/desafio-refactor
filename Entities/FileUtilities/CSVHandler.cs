@@ -1,24 +1,22 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
 using System.IO;
-using System.Text;
-using System.Threading.Tasks;
+using MedidorTCP.Entities.Protocol;
 
-namespace MedidorTCP.Entities
+namespace MedidorTCP.Entities.FileUtilities
 {
     class CSVHandler : IOutputHandler
     {
-        private String fileName;
+        private String _fileName;
 
         public CSVHandler(String fileName)
         {
-            this.fileName = fileName;
+            this._fileName = fileName;
         }
 
-        public void save(List<String> registros, String serialNumber)
+        public void Save(List<String> registros, String serialNumber)
         {
-            string fileName = string.Format("{0}.csv", this.fileName);
+            string fileName = string.Format("{0}.csv", this._fileName);
             fileName = string.Concat(fileName.Split(Path.GetInvalidFileNameChars()));
 
             using (StreamWriter writer = new StreamWriter(fileName))

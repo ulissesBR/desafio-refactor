@@ -1,4 +1,4 @@
-﻿namespace MedidorTCP.Entities
+﻿namespace MedidorTCP.Entities.Driver
 {
     public class RegistroStatus
     {

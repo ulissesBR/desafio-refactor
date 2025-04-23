@@ -1,22 +1,21 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using System.Threading;
+using MedidorTCP.Entities.Protocol;
 
-namespace MedidorTCP.Entities
+namespace MedidorTCP.Entities.Driver
 {
     class Operations
     {
-        private IMessageHandler messageHandler;
-        private IOutputHandler outputHandler;
+        private IMessageHandler _messageHandler;
+        private IOutputHandler _outputHandler;
 
         private String numeroDeSerie;
 
-        public Operations(IMessageHandler messageHandler, IOutputHandler outputHandler){
-            this.messageHandler = messageHandler;
-            this.outputHandler = outputHandler;
+        public Operations(IMessageHandler messageHandler, IOutputHandler outputHandler)
+        {
+            this._messageHandler = messageHandler;
+            this._outputHandler = outputHandler;
         }
 
         public void LerNumeroDeSerie()
@@ -24,7 +23,7 @@ namespace MedidorTCP.Entities
             byte[] rawPayload = { 0x7D, 0x00, 0x01 };
             Payload payload = new Payload(rawPayload);
 
-            Message message = messageHandler.ExchangeMessage(payload, 256);
+            Message message = _messageHandler.ExchangeMessage(payload, 256);
 
             byte checksum = message.Checksum();
             byte checksumRecebido = message.LastByte();
@@ -51,7 +50,7 @@ namespace MedidorTCP.Entities
                 byte[] rawPayload = { 0x7D, 0x00, 0x02 };
                 Payload payload = new Payload(rawPayload);
 
-                Message message = messageHandler.ExchangeMessage(payload, 8);
+                Message message = _messageHandler.ExchangeMessage(payload, 8);
 
                 byte checksum = message.Checksum();
                 byte checksumRecebido = message.LastByte();
@@ -62,8 +61,8 @@ namespace MedidorTCP.Entities
                     {
                         Console.WriteLine("Frame recebido: " + message);
 
-                        ushort indiceAntigo = (ushort)((message.buffer[3] << 8) | message.buffer[4]);
-                        ushort indiceNovo = (ushort)((message.buffer[5] << 8) | message.buffer[6]);
+                        ushort indiceAntigo = (ushort)((message.Buffer[3] << 8) | message.Buffer[4]);
+                        ushort indiceNovo = (ushort)((message.Buffer[5] << 8) | message.Buffer[6]);
 
                         Console.WriteLine("Índice mais antigo: {0}", indiceAntigo);
                         Console.WriteLine("Índice mais novo: {0}", indiceNovo);
@@ -107,7 +106,7 @@ namespace MedidorTCP.Entities
 
             if (registros.Count > 0)
             {
-                this.outputHandler.save(registros, this.numeroDeSerie);
+                this._outputHandler.Save(registros, this.numeroDeSerie);
             }
             else
             {
@@ -124,7 +123,7 @@ namespace MedidorTCP.Entities
                 byte[] rawPayload = { 0x7D, 0x00, 0x04 };
                 Payload payload = new Payload(rawPayload);
 
-                Message message = messageHandler.ExchangeMessage(payload, 9);
+                Message message = _messageHandler.ExchangeMessage(payload, 9);
 
                 byte checksum = message.Checksum();
                 byte checksumRecebido = message.LastByte();
@@ -157,7 +156,7 @@ namespace MedidorTCP.Entities
                 byte[] rawPayload = { 0x7D, 0x00, 0x05 };
                 Payload payload = new Payload(rawPayload);
 
-                Message message = messageHandler.ExchangeMessage(payload, 8);
+                Message message = _messageHandler.ExchangeMessage(payload, 8);
 
                 byte checksum = message.Checksum();
                 byte checksumRecebido = message.LastByte();
@@ -198,12 +197,12 @@ namespace MedidorTCP.Entities
                 byte[] rawPayload = { 0x7D, 0x02, 0x03, (byte)(indice >> 8), (byte)(indice & 0xFF) };
                 Payload payload = new Payload(rawPayload);
 
-                Message message = messageHandler.ExchangeMessage(payload, 5);
+                Message message = _messageHandler.ExchangeMessage(payload, 5);
 
                 byte checksum = message.Checksum();
                 byte checksumRecebido = message.LastByte();
 
-                Console.WriteLine("Definindo índice {0} (checksum {1:X2}): {2}...", indice, checksum, BitConverter.ToString(message.buffer, 0, message.buffer.Length));
+                Console.WriteLine("Definindo índice {0} (checksum {1:X2}): {2}...", indice, checksum, BitConverter.ToString(message.Buffer, 0, message.Buffer.Length));
 
                 Thread.Sleep(10);
 
@@ -218,7 +217,7 @@ namespace MedidorTCP.Entities
                 else
                 {
                     // Não tá bonito:
-                    Console.WriteLine(string.Format("ERRO ao configurar registro {0}:\n\tBytes lidos: {1}/5; Resposta: {2}/0x83; Status: {3}/0x00.\n\tTentativas Restantes: {4}", indice, message.length, message.Function().ToString("X2"), message.buffer[3].ToString("X2"), tentativas - 1));
+                    Console.WriteLine(string.Format("ERRO ao configurar registro {0}:\n\tBytes lidos: {1}/5; Resposta: {2}/0x83; Status: {3}/0x00.\n\tTentativas Restantes: {4}", indice, message.BufferLength, message.Function().ToString("X2"), message.Buffer[3].ToString("X2"), tentativas - 1));
                 }
                 tentativas--;
                 Thread.Sleep(50);
