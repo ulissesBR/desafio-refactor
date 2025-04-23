@@ -1,0 +1,7 @@
+# Ignorar binários do Visual Studio
+bin/
+obj/
+.vs/
+*.exe
+*.pdb
+*.manifest
