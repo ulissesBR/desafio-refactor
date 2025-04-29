@@ -39,13 +39,13 @@ namespace MedidorTCP.Entities.TCP
             this._stream.Write(payload.Data, 0, payload.Data.Length);
         }
 
-        public Message ReceiveMessage(int length)
+        public byte[] ReceiveMessage(int length)
         {
             byte[] buffer = new byte[length];
 
             int bytesRead = this._stream.Read(buffer, 0, buffer.Length);
 
-            return new Message(buffer, bytesRead);
+            return buffer;
         }
 
         public void Close()

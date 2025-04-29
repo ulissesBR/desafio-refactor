@@ -1,7 +1,9 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Threading;
+using MedidorTCP.Entities.Exceptions;
 using MedidorTCP.Entities.Protocol;
+using MedidorTCP.Entities.Enums;
 
 namespace MedidorTCP.Entities.Driver
 {
@@ -21,24 +23,20 @@ namespace MedidorTCP.Entities.Driver
         public void LerNumeroDeSerie()
         {
             byte[] rawPayload = { 0x7D, 0x00, 0x01 };
-            Payload payload = new Payload(rawPayload);
 
-            Message message = _messageHandler.ExchangeMessage(payload, 256);
+            try
+            { 
+                MessageParsed messageParsed = TryExchangeMessage(rawPayload, (int)FunctionLength.LerNumeroDeSerieLength);
 
-            byte checksum = message.Checksum();
-            byte checksumRecebido = message.LastByte();
-
-            if (checksum == checksumRecebido)
-            {
-                if (message.IsNumeroDeSerie())
+                if (messageParsed.IsNumeroDeSerie)
                 {
-                    numeroDeSerie = message.NumeroDeSerie();
+                    numeroDeSerie = messageParsed.NumeroDeSerie;
                     Console.WriteLine("Número de série: " + numeroDeSerie);
                 }
             }
-            else
+            catch (ChecksumMismatchException ex)
             {
-                Console.WriteLine("Erro de checksum.");
+                Console.WriteLine("ERRO [Ler Número de Série]: " + ex.Message);
             }
         }
 
@@ -48,21 +46,17 @@ namespace MedidorTCP.Entities.Driver
             while (tentativas > 0)
             {
                 byte[] rawPayload = { 0x7D, 0x00, 0x02 };
-                Payload payload = new Payload(rawPayload);
-
-                Message message = _messageHandler.ExchangeMessage(payload, 8);
-
-                byte checksum = message.Checksum();
-                byte checksumRecebido = message.LastByte();
-
-                if (checksum == checksumRecebido)
+                try
                 {
-                    if (message.IsRegistroStatus())
-                    {
-                        Console.WriteLine("Frame recebido: " + message);
 
-                        ushort indiceAntigo = (ushort)((message.Buffer[3] << 8) | message.Buffer[4]);
-                        ushort indiceNovo = (ushort)((message.Buffer[5] << 8) | message.Buffer[6]);
+                    MessageParsed messageParsed = TryExchangeMessage(rawPayload, (int)FunctionLength.LerRegistroStatusLength);
+
+                    if (messageParsed.IsRegistroStatus)
+                    {
+                        Console.WriteLine("Frame recebido: " + messageParsed);
+
+                        ushort indiceAntigo = (ushort)((messageParsed.Buffer[3] << 8) | messageParsed.Buffer[4]);
+                        ushort indiceNovo = (ushort)((messageParsed.Buffer[5] << 8) | messageParsed.Buffer[6]);
 
                         Console.WriteLine("Índice mais antigo: {0}", indiceAntigo);
                         Console.WriteLine("Índice mais novo: {0}", indiceNovo);
@@ -74,9 +68,9 @@ namespace MedidorTCP.Entities.Driver
                         Console.WriteLine("Frame de resposta inesperado.");
                     }
                 }
-                else
+                catch (ChecksumMismatchException ex)
                 {
-                    Console.WriteLine("Erro de checksum ao ler status.");
+                    Console.WriteLine("ERRO [Ler Registro Status]: " + ex.Message);
                 }
 
                 tentativas--;
@@ -121,28 +115,26 @@ namespace MedidorTCP.Entities.Driver
             while (tentativas > 0)
             {
                 byte[] rawPayload = { 0x7D, 0x00, 0x04 };
-                Payload payload = new Payload(rawPayload);
-
-                Message message = _messageHandler.ExchangeMessage(payload, 9);
-
-                byte checksum = message.Checksum();
-                byte checksumRecebido = message.LastByte();
-
-                if (checksum == checksumRecebido)
+                try
                 {
-                    if (message.IsDataHora())
+                    MessageParsed messageParsed = TryExchangeMessage(rawPayload, (int)FunctionLength.LerDataHoraLength);
+                    
+                    if (messageParsed.IsDataHora)
                     {
-                        return message.ExtrairDataHora();
+                        return messageParsed.DataHora;
                     }
                     else
                     {
                         Console.WriteLine("Erro na leitura da data/hora.");
                     }
                 }
+                catch (ChecksumMismatchException ex)
+                {
+                    Console.WriteLine("ERRO [Data e Hora]: " + ex.Message);
+                }
 
                 tentativas--;
                 Thread.Sleep(50);
-                Console.WriteLine("Erro de checksum ao ler data e hora");
             }
 
             return "Falha ao ler a data e hora após múltiplas tentativas";
@@ -154,19 +146,15 @@ namespace MedidorTCP.Entities.Driver
             while (tentativas > 0)
             {
                 byte[] rawPayload = { 0x7D, 0x00, 0x05 };
-                Payload payload = new Payload(rawPayload);
-
-                Message message = _messageHandler.ExchangeMessage(payload, 8);
-
-                byte checksum = message.Checksum();
-                byte checksumRecebido = message.LastByte();
-
-                if (checksum == checksumRecebido)
+                try
                 {
-                    Console.WriteLine("Frame recebido: " + message);
-                    if (message.IsValorEnergia())
+                    MessageParsed messageParsed = TryExchangeMessage(rawPayload, (int)FunctionLength.LerValorEnergiaLength);
+
+                    Console.WriteLine("Frame recebido: " + messageParsed);
+
+                    if (messageParsed.IsValorEnergia)
                     {
-                        byte[] energiaBytes = message.Energia();
+                        byte[] energiaBytes = messageParsed.Energia;
 
                         float energia = BitConverter.ToSingle(energiaBytes, 0);
                         energia = (float)Math.Round(energia / 1e3, 2, MidpointRounding.ToEven);
@@ -177,9 +165,9 @@ namespace MedidorTCP.Entities.Driver
                         Console.WriteLine("Erro: Frame inesperado.");
                     }
                 }
-                else
+                catch (ChecksumMismatchException ex)
                 {
-                    Console.WriteLine("Erro de checksum ao ler energia.");
+                    Console.WriteLine("ERRO [Ler Valor Energia]: " + ex.Message);
                 }
 
                 tentativas--;
@@ -195,34 +183,57 @@ namespace MedidorTCP.Entities.Driver
             while (tentativas > 0)
             {
                 byte[] rawPayload = { 0x7D, 0x02, 0x03, (byte)(indice >> 8), (byte)(indice & 0xFF) };
-                Payload payload = new Payload(rawPayload);
-
-                Message message = _messageHandler.ExchangeMessage(payload, 5);
-
-                byte checksum = message.Checksum();
-                byte checksumRecebido = message.LastByte();
-
-                Console.WriteLine("Definindo índice {0} (checksum {1:X2}): {2}...", indice, checksum, BitConverter.ToString(message.Buffer, 0, message.Buffer.Length));
-
-                Thread.Sleep(10);
-
-                Console.WriteLine("Frame recebido: " + message);
-
-                if (message.IsIndiceRegistro())
+                try
                 {
-                    // Ou seja, tá bonito:
-                    Console.WriteLine(string.Format("SUCESSO ao configurar registro {0}!", indice));
-                    return true;
+                    MessageParsed messageParsed = TryExchangeMessage(rawPayload, (int)FunctionLength.DefinirIndiceRegistroLength);
+
+                    Console.WriteLine("Definindo índice {0} (checksum {1:X2}): {2}...", indice, messageParsed.Checksum, BitConverter.ToString(messageParsed.Buffer, 0, messageParsed.Buffer.Length));
+
+                    Thread.Sleep(10);
+
+                    Console.WriteLine("Frame recebido: " + messageParsed);
+
+                    if (messageParsed.IsIndiceRegistro)
+                    {
+                        Console.WriteLine(string.Format("SUCESSO ao configurar registro {0}!", indice));
+                        return true;
+                    }
+                    else
+                    {
+                        // Não tá bonito:
+                        Console.WriteLine(string.Format("ERRO ao configurar registro {0}:\n\tBytes lidos: {1}/5; Resposta: {2}/0x83; Status: {3}/0x00.\n\tTentativas Restantes: {4}", indice, messageParsed.BufferLength, messageParsed.Function.ToString("X2"), messageParsed.Buffer[3].ToString("X2"), tentativas - 1));
+                    }
+                    tentativas--;
+                    Thread.Sleep(50);
                 }
-                else
+                catch (ChecksumMismatchException ex)
                 {
-                    // Não tá bonito:
-                    Console.WriteLine(string.Format("ERRO ao configurar registro {0}:\n\tBytes lidos: {1}/5; Resposta: {2}/0x83; Status: {3}/0x00.\n\tTentativas Restantes: {4}", indice, message.BufferLength, message.Function().ToString("X2"), message.Buffer[3].ToString("X2"), tentativas - 1));
+                    Console.WriteLine("ERRO [Definir Indice Registro]: " + ex.Message);
                 }
-                tentativas--;
-                Thread.Sleep(50);
             }
             return false;
+        }
+
+        public MessageParsed TryExchangeMessage(byte[] rawPayload, int payloadSize)
+        {
+            // Lógica externalizada para esse novo método "TryExchangeMessage"
+            // O método envia e recebe a mensagem, calcula o checksum e o compara com o recebido. Retorna um MessageParsed, ou uma falha, lançando exepction dentro do método.
+            Payload payload = new Payload(rawPayload);
+
+            var frame = _messageHandler.ExchangeMessage(payload, payloadSize);
+            MessageParsed messageParsed = MessageParsed.Parse(frame);
+
+            byte checksum = messageParsed.Checksum;
+            byte checksumRecebido = messageParsed.LastByte;
+
+            if (checksum == checksumRecebido)
+            {
+                return messageParsed;
+            }
+            else
+            {
+                throw new ChecksumMismatchException("Checksum recebido é diferente do checksum calculado.");
+            }
         }
     }
 }

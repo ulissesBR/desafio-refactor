@@ -13,12 +13,16 @@ namespace MedidorTCP
     {
         static void Main(string[] args)
         {
-            ArrayList arguments = handleArguments(args);
+            /* Teste */
+            ArgumentData argumentData = new ArgumentData("20.232.142.24", "12167", "46036", "46244");
+            Run(argumentData);
 
-            foreach (ArgumentData argument in arguments)
-            {
-                Run(argument);
-            }
+            //ArrayList arguments = handleArguments(args);
+
+            //foreach (ArgumentData argument in arguments)
+            //{
+                //Run(argument);
+            //}
         }
 
         private static void Run(ArgumentData arguments)
@@ -43,7 +47,6 @@ namespace MedidorTCP
 
                 operations.LerNumeroDeSerie(); // Lemos o número de série primeiro
 
-                // TODO: CONFERIR ISSO! E se os indices forem, efetivamente, 0?
                 if (arguments.FirstIndex > 0 && arguments.LastIndex > 0)
                 {
                     operations.LerRegistros((ushort)arguments.FirstIndex, (ushort)arguments.LastIndex);

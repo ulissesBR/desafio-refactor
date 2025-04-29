@@ -44,6 +44,11 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Entities\Enums\FunctionLength.cs" />
+    <Compile Include="Entities\Exceptions\ChecksumMismatchException.cs" />
+    <Compile Include="Entities\Protocol\MensagemEnergia.cs" />
+    <None Include="Entities\Protocol\Message_bkp .cs" />
+    <Compile Include="Entities\Protocol\MessageParsed .cs" />
     <Compile Include="Entities\UserInputHandle\ArgumentData.cs" />
     <Compile Include="Entities\Protocol\Buffer.cs" />
     <Compile Include="Entities\FileUtilities\CSVHandler.cs" />

@@ -2,6 +2,6 @@
 {
     interface IMessageHandler
     {
-        Message ExchangeMessage(Payload payload, int readLength);
+        byte[] ExchangeMessage(Payload payload, int readLength);
     }
 }

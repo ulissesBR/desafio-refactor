@@ -8,6 +8,6 @@ namespace MedidorTCP.Entities.TCP
         void Close();
 
         void SendMessage(Payload payload);
-        Message ReceiveMessage(int length);
+        byte[] ReceiveMessage(int length);
     }
 }
