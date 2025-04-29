@@ -1,6 +1,6 @@
 ﻿namespace MedidorTCP.Entities.Protocol
 {
-    interface IMessageHandler
+    public interface IMessageHandler
     {
         byte[] ExchangeMessage(Payload payload, int readLength);
     }

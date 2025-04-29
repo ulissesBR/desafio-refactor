@@ -214,6 +214,7 @@ namespace MedidorTCP.Entities.Driver
             return false;
         }
 
+        /*
         public MessageParsed TryExchangeMessage(byte[] rawPayload, int payloadSize)
         {
             // Lógica externalizada para esse novo método "TryExchangeMessage"
@@ -227,6 +228,23 @@ namespace MedidorTCP.Entities.Driver
             byte checksumRecebido = messageParsed.LastByte;
 
             if (checksum == checksumRecebido)
+            {
+                return messageParsed;
+            }
+            else
+            {
+                throw new ChecksumMismatchException("Checksum recebido é diferente do checksum calculado.");
+            }
+        }
+        */
+
+        public static MessageParsed TryExchangeMessage(IMessageHandler handler, byte[] rawPayload, int payloadSize)
+        {
+            Payload payload = new Payload(rawPayload);
+            var frame = handler.ExchangeMessage(payload, payloadSize);
+            var messageParsed = MessageParsed.Parse(frame);
+
+            if (messageParsed.Checksum == messageParsed.LastByte)
             {
                 return messageParsed;
             }
