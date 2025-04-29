@@ -1,6 +1,7 @@
 ﻿using System;
 using MedidorTCP.Entities.Exceptions;
 using MedidorTCP.Entities.Enums;
+using MedidorTCP.Entities.Driver;
 
 namespace MedidorTCP.Entities.Protocol
 {
