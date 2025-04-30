@@ -20,7 +20,6 @@ namespace MedidorTCP.Entities.Driver
             this._outputHandler = outputHandler;
         }
 
-        /*
         public void LerNumeroDeSerie()
         {
             byte[] rawPayload = { 0x7D, 0x00, 0x01 };
@@ -40,7 +39,6 @@ namespace MedidorTCP.Entities.Driver
                 Console.WriteLine("ERRO [Ler Número de Série]: " + ex.Message);
             }
         }
-        */
 
         public RegistroStatus LerRegistroStatus()
         {
@@ -92,14 +90,10 @@ namespace MedidorTCP.Entities.Driver
             {
                 if (DefinirIndiceRegistro(indice))
                 {
-                    var dataHora = new DataHoraHandler(_messageHandler); //LerDataHora();
-                    string dataHoraFormatada = dataHora.DataHora;
-                    
-                    var valorEnergia = new EnergiaHandler(_messageHandler); //LerValorEnergia();
-                    string valorEnergiaFormatado = valorEnergia.ValorEnergia;
-                    
-                    Console.WriteLine("Indice: {0}; Data: {1}; Energia: {2}", indice, dataHoraFormatada, valorEnergiaFormatado);
-                    registros.Add(string.Format("{0};{1};{2}", indice, dataHoraFormatada, valorEnergiaFormatado));
+                    string dataHora = LerDataHora();
+                    string valorEnergia = LerValorEnergia();
+                    Console.WriteLine("Indice: {0}; Data: {1}; Energia: {2}", indice, dataHora, valorEnergia);
+                    registros.Add(string.Format("{0};{1};{2}", indice, dataHora, valorEnergia));
                 }
             }
 
@@ -114,7 +108,7 @@ namespace MedidorTCP.Entities.Driver
             }
 
         }
-        /*
+
         private string LerDataHora()
         {
             int tentativas = 3;
@@ -145,8 +139,7 @@ namespace MedidorTCP.Entities.Driver
 
             return "Falha ao ler a data e hora após múltiplas tentativas";
         }
-        */
-        /*
+
         private string LerValorEnergia()
         {
             int tentativas = 3;
@@ -183,7 +176,6 @@ namespace MedidorTCP.Entities.Driver
             }
             return "Falha ao ler o valor de energia após múltiplas tentativas";
         }
-        */
 
         private bool DefinirIndiceRegistro(ushort indice)
         {

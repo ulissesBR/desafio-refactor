@@ -30,8 +30,8 @@ namespace MedidorTCP
             IClientHandler clientHandler;
             IOutputHandler outputHandler;
             IMessageHandler messageHandler;
-
-            Operations operations;
+            public string numeroDeSerie { get; private set; }
+        Operations operations;
 
             Console.WriteLine("Conectando-se ao servidor ({0} - porta {1})... ", arguments.Ip, arguments.Port);
 
@@ -42,10 +42,12 @@ namespace MedidorTCP
                 outputHandler = new CSVHandler("OutputEnergia");
                 messageHandler = new MessageHandler(clientHandler);
                 operations = new Operations(messageHandler, outputHandler);
+                SerieHandler serieHandler = new SerieHandler(messageHandler);
 
                 clientHandler.Connect();
 
-                operations.LerNumeroDeSerie(); // Lemos o número de série primeiro
+                string numeroDeSerie = serieHandler.LerNumeroDeSerie();
+                //operations.LerNumeroDeSerie(); // Lemos o número de série primeiro
 
                 if (arguments.FirstIndex > 0 && arguments.LastIndex > 0)
                 {

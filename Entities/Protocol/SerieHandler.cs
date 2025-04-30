@@ -1,13 +1,14 @@
 ﻿using System;
-using MedidorTCP.Entities.Exceptions;
-using MedidorTCP.Entities.Enums;
 using MedidorTCP.Entities.Driver;
+using MedidorTCP.Entities.Enums;
+using MedidorTCP.Entities.Exceptions;
 
 namespace MedidorTCP.Entities.Protocol
 {
     public class SerieHandler
     {
         private readonly IMessageHandler _messageHandler;
+        public string NumeroDeSerie { get; private set; }
 
         public SerieHandler(IMessageHandler messageHandler)
         {
@@ -22,15 +23,16 @@ namespace MedidorTCP.Entities.Protocol
                 var messageParsed = Operations.TryExchangeMessage(_messageHandler, rawPayload, (int)FunctionLength.LerNumeroDeSerieLength);
                 if (messageParsed.IsNumeroDeSerie)
                 {
-                    return messageParsed.NumeroDeSerie;
+                    NumeroDeSerie = messageParsed.NumeroDeSerie;
+                    Console.WriteLine("Número de série: " + NumeroDeSerie);
+                    return NumeroDeSerie;
                 }
             }
-            catch (ChecksumMismatchException ex)
+            catch (Exception ex) when (ex is ChecksumMismatchException || ex is MessageNotReceivedException)
             {
                 Console.WriteLine("ERRO [Ler Número de Série]: " + ex.Message);
             }
-
-            return null;
+            return "Erro na leitura do número de série";
         }
     }
 }

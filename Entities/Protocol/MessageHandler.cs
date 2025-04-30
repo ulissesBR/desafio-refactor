@@ -1,4 +1,5 @@
 ﻿using System;
+using MedidorTCP.Entities.Exceptions;
 using MedidorTCP.Entities.TCP;
 
 namespace MedidorTCP.Entities.Protocol
@@ -14,13 +15,23 @@ namespace MedidorTCP.Entities.Protocol
 
         public byte[] ExchangeMessage(Payload payload, int readLength)
         {
-            while (true)
+            var tentativas = 3;
+
+            while (tentativas > 0)
             {
                 this._clientHandler.SendMessage(payload);
                 byte[] frame = this._clientHandler.ReceiveMessage(readLength);
 
-                return frame;
+                if (frame != null)
+                {
+                    return frame;
+                }
+                else
+                {
+                    tentativas--;
+                }
             }
+            throw new MessageNotReceivedException("Falha ao receber mensagem após múltiplas tentativas");
         }
     }
 }
