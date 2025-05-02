@@ -6,6 +6,7 @@ using MedidorTCP.Entities.FileUtilities;
 using MedidorTCP.Entities.Protocol;
 using MedidorTCP.Entities.TCP;
 using MedidorTCP.Entities.UserInputHandle;
+using Microsoft.Win32;
 
 namespace MedidorTCP
 {
@@ -32,7 +33,7 @@ namespace MedidorTCP
             IMessageHandler messageHandler;
             
             Operations operations;
-
+            LeituraDeMemoriaHandler leituraDeMemoriaHandler;
             Console.WriteLine("Conectando-se ao servidor ({0} - porta {1})... ", arguments.Ip, arguments.Port);
 
             try
@@ -42,23 +43,34 @@ namespace MedidorTCP
                 outputHandler = new CSVHandler("OutputEnergia");
                 messageHandler = new MessageHandler(clientHandler);
                 operations = new Operations(messageHandler, outputHandler);
+                leituraDeMemoriaHandler = new LeituraDeMemoriaHandler(messageHandler);
+
                 SerieHandler serieHandler = new SerieHandler(messageHandler);
 
                 clientHandler.Connect();
 
-                var numeroDeSerie = serieHandler.LerNumeroDeSerie();
-                //operations.LerNumeroDeSerie(); // Lemos o número de série primeiro
+                var numeroDeSerie = serieHandler.LerNumeroDeSerie(); // Lemos o número de série primeiro
+                //operations.LerNumeroDeSerie(); 
 
                 if (arguments.FirstIndex > 0 && arguments.LastIndex > 0)
                 {
-                    operations.LerRegistros((ushort)arguments.FirstIndex, (ushort)arguments.LastIndex);
+                    leituraDeMemoriaHandler.LerMemoriaDeMassa((ushort)arguments.FirstIndex, (ushort)arguments.LastIndex);
+                    
+                    if (leituraDeMemoriaHandler.Registros.Count > 0)
+                    {
+                        outputHandler.Save(leituraDeMemoriaHandler.Registros, numeroDeSerie);
+                    }
+                    else
+                    {
+                        Console.WriteLine("Nenhum registro válido encontrado.");
+                    }
                 }
 
                 clientHandler.Close();     // Lidos os dados, fechamos a conexão.
             }
             catch (Exception ex)
             {
-                Console.WriteLine("Erro: {0}", ex.Message);
+                Console.WriteLine("Erro [Programa principal]: {0}", ex.Message);
             }
 
             Console.WriteLine("Conexão encerrada.");

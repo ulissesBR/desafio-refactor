@@ -20,11 +20,11 @@ namespace MedidorTCP.Entities.Driver
             this._outputHandler = outputHandler;
         }
 
-        public static MessageParsed TryExchangeMessage(IMessageHandler handler, byte[] rawPayload, int payloadSize)
+        public static Mensagem TryExchangeMessage(IMessageHandler handler, byte[] rawPayload, int payloadSize)
         {
             Payload payload = new Payload(rawPayload);
             var frame = handler.ExchangeMessage(payload, payloadSize);
-            var messageParsed = MessageParsed.Parse(frame);
+            var messageParsed = Mensagem.Parse(frame);
 
             if (messageParsed.Checksum == messageParsed.LastByte)
             {

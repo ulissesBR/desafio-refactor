@@ -3,7 +3,7 @@ using MedidorTCP.Entities.Extensions;
 
 namespace MedidorTCP.Entities.Protocol
 {
-    public class Mensagem
+    public class MessageParsed
     {
         private const int FrameOverhead = 4;            // Tamanho do cabeçalho do frame (Header + Length + Function + Checksum => 1 byte cada)
 
@@ -16,7 +16,7 @@ namespace MedidorTCP.Entities.Protocol
         public byte Header { get; private set; }        // Header
         public byte FrameLength { get; private set; }   // Tamanho do frame
         public byte Function { get; private set; }      // Id da função
-        public byte LastByte { get; private set; }      // Byte de Checksum
+        public byte LastByte { get; private set; }      // Byte ce Checksum
         public byte[] Energia { get; private set; }     // Valor da energia lida
         public byte Checksum { get; private set; }      // Checksum
 
@@ -33,7 +33,7 @@ namespace MedidorTCP.Entities.Protocol
         public String DataHora { get; private set; }        // Data e hora da leitura
                 
 
-        private Mensagem(byte[] rawData)
+        private MessageParsed(byte[] rawData)
         {
             this.Buffer = rawData;
             //this.ExpectedLength = expectedLength;
@@ -62,9 +62,9 @@ namespace MedidorTCP.Entities.Protocol
 
         }
 
-        public static Mensagem Parse(byte[] buffer)
+        public static MessageParsed Parse(byte[] buffer)
         {
-            return new Mensagem(buffer);
+            return new MessageParsed(buffer);
         }
 
         public int GetBufferLength()

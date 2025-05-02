@@ -7,13 +7,11 @@ namespace MedidorTCP.Entities.Driver
     public class LeituraDeMemoriaHandler
     {
         private readonly IMessageHandler _messageHandler;
-        private readonly IOutputHandler _outputHandler;
-        List<string> registros = new List<string>();
+        public List<string> Registros = new List<string>();
 
-        public LeituraDeMemoriaHandler(IMessageHandler messageHandler, IOutputHandler outputHandler)
+        public LeituraDeMemoriaHandler(IMessageHandler messageHandler)
         {
             _messageHandler = messageHandler;
-            _outputHandler = outputHandler;
         }
 
         public void LerMemoriaDeMassa(ushort indiceInicial, ushort indiceFinal)
@@ -32,7 +30,7 @@ namespace MedidorTCP.Entities.Driver
                     string valorEnergiaFormatado = valorEnergia.ValorEnergia;
 
                     Console.WriteLine("Indice: {0}; Data: {1}; Energia: {2}", indice, dataHoraFormatada, valorEnergiaFormatado);
-                    this.registros.Add(string.Format("{0};{1};{2}", indice, dataHoraFormatada, valorEnergiaFormatado));
+                    this.Registros.Add(string.Format("{0};{1};{2}", indice, dataHoraFormatada, valorEnergiaFormatado));
                 }
             }
 

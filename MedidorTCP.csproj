@@ -44,6 +44,7 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Entities\Driver\LeituraDeMemoriaHandler.cs" />
     <Compile Include="Entities\Enums\enums\FunctionLength.cs" />
     <Compile Include="Entities\Exceptions\MessageNotReceivedException.cs" />
     <Compile Include="Entities\Protocol\DataHoraHandler.cs" />
@@ -67,7 +68,7 @@
     <Compile Include="Entities\Protocol\MessageHandler.cs" />
     <Compile Include="Entities\Driver\Operations.cs" />
     <Compile Include="Entities\Protocol\Payload.cs" />
-    <Compile Include="Entities\Driver\RegistroStatus.cs" />
+    <Compile Include="Entities\Driver\RegistroStatusHandler.cs" />
     <Compile Include="Entities\TCP\TCPHandler.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />

@@ -8,6 +8,8 @@ namespace MedidorTCP.Entities.Driver
 {
     public class RegistroStatusHandler
     {
+        public static readonly IMessageHandler _messageHandler;
+
         public ushort IndiceAntigo { get; private set; }
         public ushort IndiceNovo { get; private set; }
 
@@ -23,7 +25,7 @@ namespace MedidorTCP.Entities.Driver
             try
             {
 
-                MessageParsed messageParsed = Operations.TryExchangeMessage(rawPayload, (int)FunctionLength.LerRegistroStatusLength);
+                Mensagem messageParsed = Operations.TryExchangeMessage(_messageHandler, rawPayload, (int)FunctionLength.LerRegistroStatusLength);
 
                 if (messageParsed.IsRegistroStatus)
                 {
