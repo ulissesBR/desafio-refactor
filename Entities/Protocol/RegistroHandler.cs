@@ -17,7 +17,7 @@ namespace MedidorTCP.Entities.Protocol
             _messageHandler = messageHandler;
         }
 
-        private bool DefinirIndiceRegistro(ushort indice)
+        public bool DefinirIndiceRegistro(ushort indice)
         {
             byte[] rawPayload = { 0x7D, 0x02, 0x03, (byte)(indice >> 8), (byte)(indice & 0xFF) };
             try

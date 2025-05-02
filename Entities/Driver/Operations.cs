@@ -20,6 +20,22 @@ namespace MedidorTCP.Entities.Driver
             this._outputHandler = outputHandler;
         }
 
+        public static MessageParsed TryExchangeMessage(IMessageHandler handler, byte[] rawPayload, int payloadSize)
+        {
+            Payload payload = new Payload(rawPayload);
+            var frame = handler.ExchangeMessage(payload, payloadSize);
+            var messageParsed = MessageParsed.Parse(frame);
+
+            if (messageParsed.Checksum == messageParsed.LastByte)
+            {
+                return messageParsed;
+            }
+            else
+            {
+                throw new ChecksumMismatchException("Checksum recebido é diferente do checksum calculado.");
+            }
+        }
+
         /*
         public void LerNumeroDeSerie()
         {
@@ -42,7 +58,8 @@ namespace MedidorTCP.Entities.Driver
         }
         */
 
-        public RegistroStatus LerRegistroStatus()
+        /*
+        public RegistroStatusHandler LerRegistroStatus()
         {
             int tentativas = 3;
             while (tentativas > 0)
@@ -63,7 +80,7 @@ namespace MedidorTCP.Entities.Driver
                         Console.WriteLine("Índice mais antigo: {0}", indiceAntigo);
                         Console.WriteLine("Índice mais novo: {0}", indiceNovo);
 
-                        return new RegistroStatus(indiceAntigo, indiceNovo);
+                        return new RegistroStatusHandler(indiceAntigo, indiceNovo);
                     }
                     else
                     {
@@ -80,17 +97,20 @@ namespace MedidorTCP.Entities.Driver
             }
 
             Console.WriteLine("Falha ao ler os índices do registros após múltiplas tentativas");
-            return new RegistroStatus(0, 0);
+            return new RegistroStatusHandler(0, 0);
         }
-
+        */
+        /*
         public void LerRegistros(ushort indiceInicial, ushort indiceFinal)
         {
             Console.WriteLine("Iniciando leitura dos registros...");
+            RegistroHandler registroHandler = new RegistroHandler(_messageHandler);
+
             List<string> registros = new List<string>();
 
             for (ushort indice = indiceInicial; indice <= indiceFinal; indice++)
             {
-                if (DefinirIndiceRegistro(indice))
+                if (registroHandler.DefinirIndiceRegistro(indice))
                 {
                     var dataHora = new DataHoraHandler(_messageHandler); //LerDataHora();
                     string dataHoraFormatada = dataHora.DataHora;
@@ -114,6 +134,7 @@ namespace MedidorTCP.Entities.Driver
             }
 
         }
+        */
         /*
         private string LerDataHora()
         {
@@ -184,7 +205,7 @@ namespace MedidorTCP.Entities.Driver
             return "Falha ao ler o valor de energia após múltiplas tentativas";
         }
         */
-
+        /*
         private bool DefinirIndiceRegistro(ushort indice)
         {
             int tentativas = 3;
@@ -221,7 +242,7 @@ namespace MedidorTCP.Entities.Driver
             }
             return false;
         }
-
+        */
         /*
         public MessageParsed TryExchangeMessage(byte[] rawPayload, int payloadSize)
         {
@@ -245,21 +266,5 @@ namespace MedidorTCP.Entities.Driver
             }
         }
         */
-
-        public static MessageParsed TryExchangeMessage(IMessageHandler handler, byte[] rawPayload, int payloadSize)
-        {
-            Payload payload = new Payload(rawPayload);
-            var frame = handler.ExchangeMessage(payload, payloadSize);
-            var messageParsed = MessageParsed.Parse(frame);
-
-            if (messageParsed.Checksum == messageParsed.LastByte)
-            {
-                return messageParsed;
-            }
-            else
-            {
-                throw new ChecksumMismatchException("Checksum recebido é diferente do checksum calculado.");
-            }
-        }
     }
 }

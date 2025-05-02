@@ -44,6 +44,11 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Entities\Enums\enums\FunctionLength.cs" />
+    <Compile Include="Entities\Exceptions\MessageNotReceivedException.cs" />
+    <Compile Include="Entities\Protocol\DataHoraHandler.cs" />
+    <Compile Include="Entities\Protocol\EnergiaHandler.cs" />
+    <Compile Include="Entities\Protocol\RegistroHandler.cs" />
     <Compile Include="Entities\Protocol\SerieHandler.cs" />
     <Compile Include="Entities\Enums\FunctionLength.cs" />
     <Compile Include="Entities\Exceptions\ChecksumMismatchException.cs" />
