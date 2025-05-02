@@ -17,7 +17,6 @@ namespace MedidorTCP.Entities.Protocol
         public byte FrameLength { get; private set; }   // Tamanho do frame
         public byte Function { get; private set; }      // Id da função
         public byte LastByte { get; private set; }      // Byte de Checksum
-        public byte[] Energia { get; private set; }     // Valor da energia lida
         public byte Checksum { get; private set; }      // Checksum
 
         // Booleanos 
@@ -27,10 +26,6 @@ namespace MedidorTCP.Entities.Protocol
         public bool IsRegistroStatus { get; private set; }  // Indica se é uma resposta válida de registro de status
         public bool IsNumeroDeSerie { get; private set; }   // Indica se é uma resposta válida de número de série
         public bool IsIndiceRegistro { get; private set; }  // Indica se é uma resposta válida de índice de registro
-
-        // Grandezas
-        public String NumeroDeSerie { get; private set; }   // Número de série do medidor
-        public String DataHora { get; private set; }        // Data e hora da leitura
                 
 
         private Mensagem(byte[] rawData)
@@ -53,20 +48,6 @@ namespace MedidorTCP.Entities.Protocol
             this.IsRegistroStatus = this.GetIsRegistroStatus();
             this.IsNumeroDeSerie = this.GetIsNumeroDeSerie();
             this.IsIndiceRegistro = this.GetIsIndiceRegistro();
-            /* Dados de funções (mensagens) específicas:
-            this.Energia = this.GetEnergia();
-            this.NumeroDeSerie = this.GetNumeroDeSerie();
-            this.DataHora = this.GetDataHora();
-
-            // Booleanos para validação do frame:
-            this.IsError = this.GetIsError();
-            this.IsValorEnergia = this.GetIsValorEnergia();
-            this.IsDataHora = this.GetIsDataHora();
-            this.IsRegistroStatus = this.GetIsRegistroStatus();
-            this.IsNumeroDeSerie = this.GetIsNumeroDeSerie();
-            this.IsIndiceRegistro = this.GetIsIndiceRegistro();
-            */
-
         }
 
         public static Mensagem Parse(byte[] buffer)
@@ -97,20 +78,6 @@ namespace MedidorTCP.Entities.Protocol
         public byte GetLastByte()
         {
             return this.Buffer[this.Buffer.Length - 1];
-        }
-
-        public byte[] GetEnergia()
-        {
-            byte[] energiaBytes = new byte[4];
-            Array.Copy(this.Buffer, 3, energiaBytes, 0, 4);
-
-            // Se o sistema é little-endian, inverte a ordem dos bytes
-            if (BitConverter.IsLittleEndian)
-            {
-                Array.Reverse(energiaBytes);
-            }
-
-            return energiaBytes;
         }
 
         public byte GetChecksum()
@@ -146,31 +113,6 @@ namespace MedidorTCP.Entities.Protocol
         public bool GetIsIndiceRegistro()
         {
             return this.BufferLength == 5 && GetFunction() == 0x83 && this.Buffer[3] == 0x00;
-        }
-
-        public String GetNumeroDeSerie()
-        {
-            return System.Text.Encoding.ASCII.GetString(this.Buffer, 3, this.BufferLength - 4);
-        }
-
-        public String GetDataHora()
-        {
-            int ano = (((this.Buffer[3] << 8) | this.Buffer[4]) >> 4);
-            int mes = this.Buffer[4] & 0x0F;
-            int dia = this.Buffer[5] >> 3;
-            int hora = ((this.Buffer[5] & 0x07) << 2) | (this.Buffer[6] >> 6);
-            int minuto = this.Buffer[6] & 0x3F;
-            int segundo = this.Buffer[7] >> 2;
-
-            Console.WriteLine("Data/Hora: {0:D4}-{1:D2}-{2:D2} {3:D2}:{4:D2}:{5:D2}",
-                                    ano, mes, dia, hora, minuto, segundo);
-
-            return ano.ToString("D4") + "-" +
-                mes.ToString("D2") + "-" +
-                dia.ToString("D2") + " " +
-                hora.ToString("D2") + ":" +
-                minuto.ToString("D2") + ":" +
-                segundo.ToString("D2");
         }
 
         public override String ToString()

@@ -2,20 +2,25 @@
 using MedidorTCP.Entities.Driver;
 using MedidorTCP.Entities.Enums;
 using MedidorTCP.Entities.Exceptions;
+using MedidorTCP.Entities.Logging;
 
 namespace MedidorTCP.Entities.Protocol
 {
     public class EnergiaHandler
     {
         private readonly IMessageHandler _messageHandler;
+        private readonly ILogger _logger;
+
+        private Mensagem _mensagemRecebida; // Mensagem recebida do medidor
         public byte[] Energia { get; private set; }     // Valor da energia lida
 
 
         public string ValorEnergia { get; private set; }
 
-        public EnergiaHandler(IMessageHandler messageHandler)
+        public EnergiaHandler(IMessageHandler messageHandler, ILogger logger)
         {
             _messageHandler = messageHandler;
+            _logger = logger.WithContext(nameof(EnergiaHandler));
             ValorEnergia = LerValorEnergia();
         }
 
@@ -24,11 +29,11 @@ namespace MedidorTCP.Entities.Protocol
             byte[] rawPayload = { 0x7D, 0x00, 0x05 };
             try
             {
-                var messageParsed = Operations.TryExchangeMessage(_messageHandler, rawPayload, (int)FunctionLength.LerValorEnergiaLength);
+                _mensagemRecebida = Operations.TryExchangeMessage(_messageHandler, rawPayload, (int)FunctionLength.LerValorEnergiaLength);
 
-                Console.WriteLine("Frame recebido: " + messageParsed);
+                _logger.Info("Frame recebido: " + _mensagemRecebida);
 
-                if (messageParsed.IsValorEnergia)
+                if (_mensagemRecebida.IsValorEnergia)
                 {
                     var energiaBytes = GetEnergia();
                     var energia = BitConverter.ToSingle(energiaBytes, 0);
@@ -37,12 +42,12 @@ namespace MedidorTCP.Entities.Protocol
                 }
                 else
                 {
-                    Console.WriteLine("Erro: Frame inesperado.");
+                    _logger.Error("Frame inesperado.");
                 }
             }
             catch (Exception ex) when (ex is ChecksumMismatchException || ex is MessageNotReceivedException)
             {
-                Console.WriteLine("ERRO [Ler Valor Energia]: " + ex.Message);
+                _logger.Error(ex.Message);
             }
             return "Falha ao ler o valor de energia após múltiplas tentativas";
         }
@@ -50,7 +55,7 @@ namespace MedidorTCP.Entities.Protocol
         public byte[] GetEnergia()
         {
             byte[] energiaBytes = new byte[4];
-            Array.Copy(this.Buffer, 3, energiaBytes, 0, 4);
+            Array.Copy(_mensagemRecebida.Buffer, 3, energiaBytes, 0, 4);
 
             // Se o sistema é little-endian, inverte a ordem dos bytes
             if (BitConverter.IsLittleEndian)

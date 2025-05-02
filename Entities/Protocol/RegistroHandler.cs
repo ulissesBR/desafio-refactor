@@ -3,18 +3,21 @@ using MedidorTCP.Entities.Exceptions;
 using System.Threading;
 using System;
 using MedidorTCP.Entities.Driver;
+using MedidorTCP.Entities.Logging;
 
 namespace MedidorTCP.Entities.Protocol
 {
     public class RegistroHandler
     {
         private readonly IMessageHandler _messageHandler;
+        private readonly ILogger _logger;
 
-        public bool RegistroDefinido { get; private set; }
+        public bool IsRegistroDefinido { get; private set; }
 
-        public RegistroHandler(IMessageHandler messageHandler)
+        public RegistroHandler(IMessageHandler messageHandler, ILogger logger)
         {
             _messageHandler = messageHandler;
+            _logger = logger.WithContext(nameof(RegistroHandler));
         }
 
         public bool DefinirIndiceRegistro(ushort indice)
@@ -22,42 +25,32 @@ namespace MedidorTCP.Entities.Protocol
             byte[] rawPayload = { 0x7D, 0x02, 0x03, (byte)(indice >> 8), (byte)(indice & 0xFF) };
             try
             {
-                var messageParsed = Operations.TryExchangeMessage(_messageHandler, rawPayload, (int)FunctionLength.DefinirIndiceRegistroLength);
+                var MensagemRecebida = Operations.TryExchangeMessage(_messageHandler, rawPayload, (int)FunctionLength.DefinirIndiceRegistroLength);
 
-                Console.WriteLine("Definindo índice {0} (checksum {1:X2}): {2}...", 
-                    indice, 
-                    messageParsed.Checksum, 
-                    BitConverter.ToString(messageParsed.Buffer, 0, messageParsed.Buffer.Length)
-                    );
+                _logger.Info($"Definindo índice {indice} " +
+                    $"(checksum {MensagemRecebida.Checksum:X2}): {BitConverter.ToString(MensagemRecebida.Buffer, 0, MensagemRecebida.Buffer.Length)}...");
 
                 Thread.Sleep(10);
 
-                Console.WriteLine("Frame recebido: " + messageParsed);
+                _logger.Info("Frame recebido: " + MensagemRecebida);
 
-                if (messageParsed.IsIndiceRegistro)
+                if (MensagemRecebida.IsIndiceRegistro)
                 {
-                    Console.WriteLine(string.Format("SUCESSO ao configurar registro {0}!", indice));
-                    RegistroDefinido = true;
-                    return RegistroDefinido;
+                    _logger.Info($"SUCESSO ao configurar registro {indice}!");
+                    IsRegistroDefinido = true;
+                    return IsRegistroDefinido;
                 }
                 else
                 {
-                    // Não tá bonito:
-                    Console.WriteLine(
-                        string.Format(
-                            "ERRO ao configurar registro {0}:" +
-                        "\n\tBytes lidos: {1}/5; Resposta: {2}/0x83; Status: {3}/0x00." +
-                        indice, 
-                        messageParsed.BufferLength, 
-                        messageParsed.Function.ToString("X2"), 
-                        messageParsed.Buffer[3].ToString("X2")
-                        )
-                        );
+                    _logger.Error($"ERRO ao configurar registro {indice}:" +
+                        $"\n\tBytes lidos: {MensagemRecebida.BufferLength}/5; " +
+                        $"\n\tResposta: {MensagemRecebida.Function:X2}/0x83; " +
+                        $"\n\tStatus: {MensagemRecebida.Buffer[3]:X2}/0x00.");
                 }
             }
             catch (Exception ex) when (ex is ChecksumMismatchException || ex is MessageNotReceivedException)
             {
-                Console.WriteLine("ERRO [Definir Indice Registro]: " + ex.Message);
+                _logger.Error("ERRO [Definir Indice Registro]: " + ex.Message);
             }
             return false;
         }

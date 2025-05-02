@@ -3,6 +3,7 @@ using System.Collections;
 using System.IO;
 using MedidorTCP.Entities.Driver;
 using MedidorTCP.Entities.FileUtilities;
+using MedidorTCP.Entities.Logging;
 using MedidorTCP.Entities.Protocol;
 using MedidorTCP.Entities.TCP;
 using MedidorTCP.Entities.UserInputHandle;
@@ -31,7 +32,8 @@ namespace MedidorTCP
             IClientHandler clientHandler;
             IOutputHandler outputHandler;
             IMessageHandler messageHandler;
-            
+            ILogger logger = new ConsoleLogger();
+
             Operations operations;
             LeituraDeMemoriaHandler leituraDeMemoriaHandler;
             Console.WriteLine("Conectando-se ao servidor ({0} - porta {1})... ", arguments.Ip, arguments.Port);
@@ -43,7 +45,7 @@ namespace MedidorTCP
                 outputHandler = new CSVHandler("OutputEnergia");
                 messageHandler = new MessageHandler(clientHandler);
                 operations = new Operations(messageHandler, outputHandler);
-                leituraDeMemoriaHandler = new LeituraDeMemoriaHandler(messageHandler);
+                leituraDeMemoriaHandler = new LeituraDeMemoriaHandler(messageHandler, logger);
 
                 SerieHandler serieHandler = new SerieHandler(messageHandler);
 
