@@ -9,6 +9,7 @@ namespace MedidorTCP.Entities.Protocol
     {
         private readonly IMessageHandler _messageHandler;
         public string NumeroDeSerie { get; private set; }
+        public Mensagem MensagemRecebida { get; private set; } // Mensagem recebida do medidor
 
         public SerieHandler(IMessageHandler messageHandler)
         {
@@ -20,11 +21,10 @@ namespace MedidorTCP.Entities.Protocol
             byte[] rawPayload = { 0x7D, 0x00, 0x01 };
             try
             {
-                var messageParsed = Operations.TryExchangeMessage(_messageHandler, rawPayload, (int)FunctionLength.LerNumeroDeSerieLength);
-                if (messageParsed.IsNumeroDeSerie)
+                MensagemRecebida = Operations.TryExchangeMessage(_messageHandler, rawPayload, (int)FunctionLength.LerNumeroDeSerieLength);
+                if (MensagemRecebida.IsNumeroDeSerie)
                 {
-                    NumeroDeSerie = messageParsed.NumeroDeSerie;
-                    Console.WriteLine("Número de série: " + NumeroDeSerie);
+                    NumeroDeSerie = GetNumeroDeSerie();
                     return NumeroDeSerie;
                 }
             }
@@ -33,6 +33,11 @@ namespace MedidorTCP.Entities.Protocol
                 Console.WriteLine("ERRO [Ler Número de Série]: " + ex.Message);
             }
             return "Erro na leitura do número de série";
+        }
+
+        public string GetNumeroDeSerie()
+        {
+            return System.Text.Encoding.ASCII.GetString(MensagemRecebida.Buffer, 3, MensagemRecebida.BufferLength - 4);
         }
     }
 }

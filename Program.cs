@@ -51,6 +51,7 @@ namespace MedidorTCP
 
                 var numeroDeSerie = serieHandler.LerNumeroDeSerie(); // Lemos o número de série primeiro
                 //operations.LerNumeroDeSerie(); 
+                Console.WriteLine("Número de série: " + numeroDeSerie);
 
                 if (arguments.FirstIndex > 0 && arguments.LastIndex > 0)
                 {

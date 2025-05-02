@@ -46,7 +46,14 @@ namespace MedidorTCP.Entities.Protocol
             this.LastByte = this.GetLastByte();
             this.Checksum = this.GetChecksum();
 
-            // Dados de funções (mensagens) específicas:
+            // Verificação de erro:
+            this.IsError = this.GetIsError();
+            this.IsValorEnergia = this.GetIsValorEnergia();
+            this.IsDataHora = this.GetIsDataHora();
+            this.IsRegistroStatus = this.GetIsRegistroStatus();
+            this.IsNumeroDeSerie = this.GetIsNumeroDeSerie();
+            this.IsIndiceRegistro = this.GetIsIndiceRegistro();
+            /* Dados de funções (mensagens) específicas:
             this.Energia = this.GetEnergia();
             this.NumeroDeSerie = this.GetNumeroDeSerie();
             this.DataHora = this.GetDataHora();
@@ -58,7 +65,7 @@ namespace MedidorTCP.Entities.Protocol
             this.IsRegistroStatus = this.GetIsRegistroStatus();
             this.IsNumeroDeSerie = this.GetIsNumeroDeSerie();
             this.IsIndiceRegistro = this.GetIsIndiceRegistro();
-
+            */
 
         }
 
