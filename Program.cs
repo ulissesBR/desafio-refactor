@@ -32,9 +32,9 @@ namespace MedidorTCP
             IClientHandler clientHandler;
             IOutputHandler outputHandler;
             IMessageHandler messageHandler;
+            IOperations operations;
             ILogger logger = new ConsoleLogger();
 
-            Operations operations;
             LeituraDeMemoriaHandler leituraDeMemoriaHandler;
             Console.WriteLine("Conectando-se ao servidor ({0} - porta {1})... ", arguments.Ip, arguments.Port);
 
@@ -45,9 +45,9 @@ namespace MedidorTCP
                 outputHandler = new CSVHandler("OutputEnergia");
                 messageHandler = new MessageHandler(clientHandler);
                 operations = new Operations(messageHandler, outputHandler);
-                leituraDeMemoriaHandler = new LeituraDeMemoriaHandler(messageHandler, logger);
+                leituraDeMemoriaHandler = new LeituraDeMemoriaHandler(messageHandler, logger, operations);
 
-                SerieHandler serieHandler = new SerieHandler(messageHandler);
+                SerieHandler serieHandler = new SerieHandler(messageHandler, operations);
 
                 clientHandler.Connect();
 

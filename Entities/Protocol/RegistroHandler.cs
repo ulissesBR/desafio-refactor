@@ -11,13 +11,15 @@ namespace MedidorTCP.Entities.Protocol
     {
         private readonly IMessageHandler _messageHandler;
         private readonly ILogger _logger;
+        private readonly IOperations _operations;
 
         public bool IsRegistroDefinido { get; private set; }
 
-        public RegistroHandler(IMessageHandler messageHandler, ILogger logger)
+        public RegistroHandler(IMessageHandler messageHandler, ILogger logger, IOperations operations)
         {
             _messageHandler = messageHandler;
             _logger = logger.WithContext(nameof(RegistroHandler));
+            _operations = operations;
         }
 
         public bool DefinirIndiceRegistro(ushort indice)
@@ -25,7 +27,7 @@ namespace MedidorTCP.Entities.Protocol
             byte[] rawPayload = { 0x7D, 0x02, 0x03, (byte)(indice >> 8), (byte)(indice & 0xFF) };
             try
             {
-                var MensagemRecebida = Operations.TryExchangeMessage(_messageHandler, rawPayload, (int)FunctionLength.DefinirIndiceRegistroLength);
+                var MensagemRecebida = _operations.TryExchangeMessage(_messageHandler, rawPayload, (int)FunctionLength.DefinirIndiceRegistroLength);
 
                 _logger.Info($"Definindo índice {indice} " +
                     $"(checksum {MensagemRecebida.Checksum:X2}): {BitConverter.ToString(MensagemRecebida.Buffer, 0, MensagemRecebida.Buffer.Length)}...");
@@ -50,7 +52,7 @@ namespace MedidorTCP.Entities.Protocol
             }
             catch (Exception ex) when (ex is ChecksumMismatchException || ex is MessageNotReceivedException)
             {
-                _logger.Error("ERRO [Definir Indice Registro]: " + ex.Message);
+                _logger.Error(ex.Message);
             }
             return false;
         }

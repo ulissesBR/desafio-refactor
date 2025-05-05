@@ -9,14 +9,16 @@ namespace MedidorTCP.Entities.Driver
     public class RegistroStatusHandler
     {
         public static readonly IMessageHandler _messageHandler;
+        public static IOperations _operations;
 
         public ushort IndiceAntigo { get; private set; }
         public ushort IndiceNovo { get; private set; }
 
-        public RegistroStatusHandler(ushort indiceAntigo, ushort indiceNovo)
+        public RegistroStatusHandler(ushort indiceAntigo, ushort indiceNovo, IOperations operations)
         {
             IndiceAntigo = indiceAntigo;
             IndiceNovo = indiceNovo;
+            _operations = operations;
         }
 
         public static RegistroStatusHandler LerRegistroStatus()
@@ -25,7 +27,7 @@ namespace MedidorTCP.Entities.Driver
             try
             {
 
-                Mensagem messageParsed = Operations.TryExchangeMessage(_messageHandler, rawPayload, (int)FunctionLength.LerRegistroStatusLength);
+                Mensagem messageParsed = _operations.TryExchangeMessage(_messageHandler, rawPayload, (int)FunctionLength.LerRegistroStatusLength);
 
                 if (messageParsed.IsRegistroStatus)
                 {
@@ -37,7 +39,7 @@ namespace MedidorTCP.Entities.Driver
                     Console.WriteLine("Índice mais antigo: {0}", indiceAntigo);
                     Console.WriteLine("Índice mais novo: {0}", indiceNovo);
 
-                    return new RegistroStatusHandler(indiceAntigo, indiceNovo);
+                    return new RegistroStatusHandler(indiceAntigo, indiceNovo, _operations);
                 }
                 else
                 {
@@ -50,7 +52,7 @@ namespace MedidorTCP.Entities.Driver
             }
 
             Console.WriteLine("Falha ao ler os índices do registros após múltiplas tentativas");
-            return new RegistroStatusHandler(0, 0);
+            return new RegistroStatusHandler(0, 0, null);
         }
     }
 }

@@ -1,13 +1,10 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Threading;
 using MedidorTCP.Entities.Exceptions;
 using MedidorTCP.Entities.Protocol;
-using MedidorTCP.Entities.Enums;
 
 namespace MedidorTCP.Entities.Driver
 {
-    class Operations
+    public class Operations : IOperations
     {
         private IMessageHandler _messageHandler;
         private IOutputHandler _outputHandler;
@@ -20,7 +17,7 @@ namespace MedidorTCP.Entities.Driver
             this._outputHandler = outputHandler;
         }
 
-        public static Mensagem TryExchangeMessage(IMessageHandler handler, byte[] rawPayload, int payloadSize)
+        public Mensagem TryExchangeMessage(IMessageHandler handler, byte[] rawPayload, int payloadSize)
         {
             Payload payload = new Payload(rawPayload);
             var frame = handler.ExchangeMessage(payload, payloadSize);

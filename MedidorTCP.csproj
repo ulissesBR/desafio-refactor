@@ -51,12 +51,13 @@
     <Compile Include="Entities\Logging\ILogger.cs" />
     <Compile Include="Entities\Protocol\DataHoraHandler.cs" />
     <Compile Include="Entities\Protocol\EnergiaHandler.cs" />
+    <Compile Include="Entities\Driver\IOperations.cs" />
+    <Compile Include="Entities\Protocol\Message.cs" />
     <Compile Include="Entities\Protocol\RegistroHandler.cs" />
     <Compile Include="Entities\Protocol\SerieHandler.cs" />
     <Compile Include="Entities\Exceptions\ChecksumMismatchException.cs" />
-    <Compile Include="Entities\Protocol\MessageParsed .cs" />
     <Compile Include="Entities\UserInputHandle\ArgumentData.cs" />
-    <Compile Include="Entities\FileUtilities\CSVHandler.cs" />
+    <Compile Include="Entities\Driver\FileUtilities\CSVHandler.cs" />
     <Compile Include="Entities\Helper\Extensions.cs" />
     <Compile Include="Entities\TCP\IClientHandler.cs" />
     <Compile Include="Entities\Protocol\IOutputHandler.cs" />

@@ -9,28 +9,30 @@ namespace MedidorTCP.Entities.Driver
     {
         private readonly IMessageHandler _messageHandler;
         private readonly ILogger _logger;
-        
+        IOperations _operations;
+
         public List<string> Registros = new List<string>();
 
-        public LeituraDeMemoriaHandler(IMessageHandler messageHandler, ILogger logger)
+        public LeituraDeMemoriaHandler(IMessageHandler messageHandler, ILogger logger, IOperations operations)
         {
             _messageHandler = messageHandler;
             _logger = logger.WithContext(nameof(LeituraDeMemoriaHandler));
+            _operations = operations;
         }
 
         public void LerMemoriaDeMassa(ushort indiceInicial, ushort indiceFinal)
         {
             Console.WriteLine("Iniciando leitura dos registros...");
-            RegistroHandler registroHandler = new RegistroHandler(_messageHandler, _logger);
+            RegistroHandler registroHandler = new RegistroHandler(_messageHandler, _logger, _operations);
 
             for (ushort indice = indiceInicial; indice <= indiceFinal; indice++)
             {
                 if (registroHandler.DefinirIndiceRegistro(indice))
                 {
-                    var dataHora = new DataHoraHandler(_messageHandler, _logger); //LerDataHora();
+                    var dataHora = new DataHoraHandler(_messageHandler, _logger, _operations); //LerDataHora();
                     string dataHoraFormatada = dataHora.DataHora;
 
-                    var valorEnergia = new EnergiaHandler(_messageHandler, _logger); //LerValorEnergia();
+                    var valorEnergia = new EnergiaHandler(_messageHandler, _logger, _operations); //LerValorEnergia();
                     string valorEnergiaFormatado = valorEnergia.ValorEnergia;
 
                     //Console.WriteLine("Indice: {0}; Data: {1}; Energia: {2}", indice, dataHoraFormatada, valorEnergiaFormatado);

@@ -10,6 +10,7 @@ namespace MedidorTCP.Entities.Protocol
     {
         private readonly IMessageHandler _messageHandler;
         private readonly ILogger _logger;
+        private readonly IOperations _operations;
 
         private Mensagem _mensagemRecebida; // Mensagem recebida do medidor
         public byte[] Energia { get; private set; }     // Valor da energia lida
@@ -17,10 +18,11 @@ namespace MedidorTCP.Entities.Protocol
 
         public string ValorEnergia { get; private set; }
 
-        public EnergiaHandler(IMessageHandler messageHandler, ILogger logger)
+        public EnergiaHandler(IMessageHandler messageHandler, ILogger logger, IOperations operations)
         {
             _messageHandler = messageHandler;
             _logger = logger.WithContext(nameof(EnergiaHandler));
+            _operations = operations;
             ValorEnergia = LerValorEnergia();
         }
 
@@ -29,7 +31,7 @@ namespace MedidorTCP.Entities.Protocol
             byte[] rawPayload = { 0x7D, 0x00, 0x05 };
             try
             {
-                _mensagemRecebida = Operations.TryExchangeMessage(_messageHandler, rawPayload, (int)FunctionLength.LerValorEnergiaLength);
+                _mensagemRecebida = _operations.TryExchangeMessage(_messageHandler, rawPayload, (int)FunctionLength.LerValorEnergiaLength);
 
                 _logger.Info("Frame recebido: " + _mensagemRecebida);
 

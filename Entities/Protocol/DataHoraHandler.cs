@@ -10,14 +10,16 @@ namespace MedidorTCP.Entities.Protocol
     {
         private readonly IMessageHandler _messageHandler;
         private readonly ILogger _logger;
+        private readonly IOperations _operations;
         private Mensagem _mensagemRecebida;
 
         public string DataHora { get; private set; }
 
-        public DataHoraHandler(IMessageHandler messageHandler, ILogger logger)
+        public DataHoraHandler(IMessageHandler messageHandler, ILogger logger, IOperations operations)
         {
             this._messageHandler = messageHandler;
             this._logger = logger.WithContext(nameof(DataHoraHandler));
+            this._operations = operations;
             this.DataHora = LerDataHora();
         }
 
@@ -26,7 +28,7 @@ namespace MedidorTCP.Entities.Protocol
             byte[] rawPayload = { 0x7D, 0x00, 0x04 };
             try
             {
-                _mensagemRecebida = Operations.TryExchangeMessage(_messageHandler, rawPayload, (int)FunctionLength.LerDataHoraLength);
+                _mensagemRecebida = _operations.TryExchangeMessage(_messageHandler, rawPayload, (int)FunctionLength.LerDataHoraLength);
                 if (_mensagemRecebida.IsDataHora)
                 {
                     this.DataHora = GetDataHora();

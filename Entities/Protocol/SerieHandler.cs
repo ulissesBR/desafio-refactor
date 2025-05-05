@@ -10,14 +10,16 @@ namespace MedidorTCP.Entities.Protocol
     {
         private readonly IMessageHandler _messageHandler;
         private readonly ILogger _logger;
+        private readonly IOperations _operations;
 
         public string NumeroDeSerie { get; private set; }
         public Mensagem MensagemRecebida { get; private set; } // Mensagem recebida do medidor
 
-        public SerieHandler(IMessageHandler messageHandler)
+        public SerieHandler(IMessageHandler messageHandler, IOperations operations)
         {
             _messageHandler = messageHandler;
             _logger = new ConsoleLogger(nameof(SerieHandler));
+            _operations = operations;
         }
 
         public string LerNumeroDeSerie()
@@ -25,7 +27,7 @@ namespace MedidorTCP.Entities.Protocol
             byte[] rawPayload = { 0x7D, 0x00, 0x01 };
             try
             {
-                MensagemRecebida = Operations.TryExchangeMessage(_messageHandler, rawPayload, (int)FunctionLength.LerNumeroDeSerieLength);
+                MensagemRecebida = _operations.TryExchangeMessage(_messageHandler, rawPayload, (int)FunctionLength.LerNumeroDeSerieLength);
                 if (MensagemRecebida.IsNumeroDeSerie)
                 {
                     NumeroDeSerie = GetNumeroDeSerie();
