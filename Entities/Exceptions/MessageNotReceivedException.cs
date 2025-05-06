@@ -2,7 +2,7 @@
 
 namespace MedidorTCP.Entities.Exceptions
 {
-    internal class MessageNotReceivedException : Exception
+    public class MessageNotReceivedException : Exception
     {
         public MessageNotReceivedException()
         {
