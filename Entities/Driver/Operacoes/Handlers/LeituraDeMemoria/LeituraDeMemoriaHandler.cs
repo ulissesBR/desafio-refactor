@@ -20,12 +20,12 @@ namespace MedidorTCP.Entities.Driver
             _operations = operations;
         }
 
-        public void LerMemoriaDeMassa(ushort indiceInicial, ushort indiceFinal)
+        public void LerMemoriaDeMassa(int indiceInicial, int indiceFinal)
         {
             Console.WriteLine("Iniciando leitura dos registros...");
             RegistroHandler registroHandler = new RegistroHandler(_messageHandler, _logger, _operations);
 
-            for (ushort indice = indiceInicial; indice <= indiceFinal; indice++)
+            for (int indice = indiceInicial; indice <= indiceFinal; indice++)
             {
                 if (registroHandler.DefinirIndiceRegistro(indice))
                 {
@@ -35,7 +35,6 @@ namespace MedidorTCP.Entities.Driver
                     var valorEnergia = new EnergiaHandler(_messageHandler, _logger, _operations); //LerValorEnergia();
                     string valorEnergiaFormatado = valorEnergia.ValorEnergia;
 
-                    //Console.WriteLine("Indice: {0}; Data: {1}; Energia: {2}", indice, dataHoraFormatada, valorEnergiaFormatado);
                     _logger.Info($"Indice: {indice}; Data: {dataHoraFormatada}; Energia: {valorEnergiaFormatado}");
                     this.Registros.Add(string.Format("{0};{1};{2}", indice, dataHoraFormatada, valorEnergiaFormatado));
                 }

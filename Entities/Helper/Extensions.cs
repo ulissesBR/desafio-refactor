@@ -2,7 +2,8 @@
 {
     public static class Extensions
     {
-        public static byte Checksum(this byte[] buf)
+        // Calcula o chacksum do payload que será enviado para o medidor.
+        public static byte CalcularChecksum(this byte[] buf)
         {
             byte checksum = 0x00;
 
@@ -13,5 +14,19 @@
 
             return checksum;
         }
+
+        // Confere o CS do payload da mensagem recebida, ignorando o último byte do frame, que é o CS recebido.
+        public static byte ConferirChecksum(this byte[] buf)
+        {
+            byte checksum = 0x00;
+
+            for (int i = 1; i < buf.Length-1; i++)
+            {
+                checksum ^= buf[i];
+            }
+
+            return checksum;
+        }
+
     }
 }

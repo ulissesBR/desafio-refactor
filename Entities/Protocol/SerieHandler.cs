@@ -3,6 +3,7 @@ using MedidorTCP.Entities.Driver;
 using MedidorTCP.Entities.Enums;
 using MedidorTCP.Entities.Exceptions;
 using MedidorTCP.Entities.Logging;
+using static MedidorTCP.Entities.Enums.TipoMensagem;
 
 namespace MedidorTCP.Entities.Protocol
 {
@@ -28,7 +29,7 @@ namespace MedidorTCP.Entities.Protocol
             try
             {
                 MensagemRecebida = _operations.TryExchangeMessage(_messageHandler, rawPayload, (int)FunctionLength.LerNumeroDeSerieLength);
-                if (MensagemRecebida.IsNumeroDeSerie)
+                if (MensagemRecebida.Tipo == NumeroDeSerieTipo)
                 {
                     NumeroDeSerie = GetNumeroDeSerie();
                     return NumeroDeSerie;

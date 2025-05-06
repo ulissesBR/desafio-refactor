@@ -3,6 +3,7 @@ using MedidorTCP.Entities.Driver;
 using MedidorTCP.Entities.Enums;
 using MedidorTCP.Entities.Exceptions;
 using MedidorTCP.Entities.Logging;
+using static MedidorTCP.Entities.Enums.TipoMensagem;
 
 namespace MedidorTCP.Entities.Protocol
 {
@@ -11,7 +12,7 @@ namespace MedidorTCP.Entities.Protocol
         private readonly IMessageHandler _messageHandler;
         private readonly ILogger _logger;
         private readonly IOperations _operations;
-        private Mensagem _mensagemRecebida;
+        private Mensagem mensagemRecebida;
 
         public string DataHora { get; private set; }
 
@@ -28,8 +29,8 @@ namespace MedidorTCP.Entities.Protocol
             byte[] rawPayload = { 0x7D, 0x00, 0x04 };
             try
             {
-                _mensagemRecebida = _operations.TryExchangeMessage(_messageHandler, rawPayload, (int)FunctionLength.LerDataHoraLength);
-                if (_mensagemRecebida.IsDataHora)
+                mensagemRecebida = _operations.TryExchangeMessage(_messageHandler, rawPayload, (int)FunctionLength.LerDataHoraLength);
+                if (mensagemRecebida.Tipo == DataHoraTipo)
                 {
                     this.DataHora = GetDataHora();
                     return this.DataHora;
@@ -45,12 +46,12 @@ namespace MedidorTCP.Entities.Protocol
 
         public String GetDataHora()
         {
-            int ano = (((_mensagemRecebida.Buffer[3] << 8) | _mensagemRecebida.Buffer[4]) >> 4);
-            int mes = _mensagemRecebida.Buffer[4] & 0x0F;
-            int dia = _mensagemRecebida.Buffer[5] >> 3;
-            int hora = ((_mensagemRecebida.Buffer[5] & 0x07) << 2) | (_mensagemRecebida.Buffer[6] >> 6);
-            int minuto = _mensagemRecebida.Buffer[6] & 0x3F;
-            int segundo = _mensagemRecebida.Buffer[7] >> 2;
+            int ano = (((mensagemRecebida.Buffer[3] << 8) | mensagemRecebida.Buffer[4]) >> 4);
+            int mes = mensagemRecebida.Buffer[4] & 0x0F;
+            int dia = mensagemRecebida.Buffer[5] >> 3;
+            int hora = ((mensagemRecebida.Buffer[5] & 0x07) << 2) | (mensagemRecebida.Buffer[6] >> 6);
+            int minuto = mensagemRecebida.Buffer[6] & 0x3F;
+            int segundo = mensagemRecebida.Buffer[7] >> 2;
 
             _logger.Info ($"Data/Hora: {ano:D4}-{mes:D2}-{dia:D2} {hora:D2}:{minuto:D2}:{segundo:D2}");
 

@@ -1,6 +1,7 @@
 ﻿using MedidorTCP.Entities.Enums;
 using MedidorTCP.Entities.Exceptions;
 using MedidorTCP.Entities.Protocol;
+using static MedidorTCP.Entities.Enums.TipoMensagem;
 using System.Threading;
 using System;
 
@@ -8,33 +9,35 @@ namespace MedidorTCP.Entities.Driver
 {
     public class RegistroStatusHandler
     {
-        public static readonly IMessageHandler _messageHandler;
+        public static IMessageHandler _messageHandler;
         public static IOperations _operations;
 
-        public ushort IndiceAntigo { get; private set; }
-        public ushort IndiceNovo { get; private set; }
+        public int IndiceAntigo { get; private set; }
+        public int IndiceNovo { get; private set; }
 
-        public RegistroStatusHandler(ushort indiceAntigo, ushort indiceNovo, IOperations operations)
+        public RegistroStatusHandler(int indiceAntigo, int indiceNovo, IOperations operations)
         {
             IndiceAntigo = indiceAntigo;
             IndiceNovo = indiceNovo;
             _operations = operations;
         }
 
-        public static RegistroStatusHandler LerRegistroStatus()
+        public static RegistroStatusHandler LerRegistroStatus(IMessageHandler messageHandler, IOperations operations)
         {
+            _operations = operations;
+            _messageHandler = messageHandler;
             byte[] rawPayload = { 0x7D, 0x00, 0x02 };
             try
             {
 
-                Mensagem messageParsed = _operations.TryExchangeMessage(_messageHandler, rawPayload, (int)FunctionLength.LerRegistroStatusLength);
+                Mensagem mensagemRecebida = _operations.TryExchangeMessage(_messageHandler, rawPayload, (int)FunctionLength.LerRegistroStatusLength);
 
-                if (messageParsed.IsRegistroStatus)
+                if (mensagemRecebida.Tipo == RegistroStatus)
                 {
-                    Console.WriteLine("Frame recebido: " + messageParsed);
+                    Console.WriteLine("Frame recebido: " + mensagemRecebida);
 
-                    var indiceAntigo = (ushort)((messageParsed.Buffer[3] << 8) | messageParsed.Buffer[4]);
-                    var indiceNovo = (ushort)((messageParsed.Buffer[5] << 8) | messageParsed.Buffer[6]);
+                    var indiceAntigo = (ushort)((mensagemRecebida.Buffer[3] << 8) | mensagemRecebida.Buffer[4]);
+                    var indiceNovo = (ushort)((mensagemRecebida.Buffer[5] << 8) | mensagemRecebida.Buffer[6]);
 
                     Console.WriteLine("Índice mais antigo: {0}", indiceAntigo);
                     Console.WriteLine("Índice mais novo: {0}", indiceNovo);

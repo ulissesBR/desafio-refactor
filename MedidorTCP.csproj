@@ -44,14 +44,20 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Entities\Driver\LeituraDeMemoriaHandler.cs" />
-    <Compile Include="Entities\Enums\enums\FunctionLength.cs" />
+    <Compile Include="Entities\Driver\BytesDeStatusDasMensagens\BytesStatus.cs" />
+    <Compile Include="Entities\Driver\Frame\Frame.cs" />
+    <Compile Include="Entities\Driver\Frame\IdentificadorDeMensagem.cs" />
+    <Compile Include="Entities\Driver\FuncoesDasMensagens\FuncoesMensagem.cs" />
+    <Compile Include="Entities\Driver\Operacoes\Handlers\LeituraDeMemoria\LeituraDeMemoriaHandler.cs" />
+    <Compile Include="Entities\Driver\TamanhosDasMensagens\TamanhoMensagem.cs" />
+    <Compile Include="Entities\Enums\FunctionLength.cs" />
+    <Compile Include="Entities\Enums\TipoMensagem.cs" />
     <Compile Include="Entities\Exceptions\MessageNotReceivedException.cs" />
     <Compile Include="Entities\Logging\ConsoleLogger.cs" />
     <Compile Include="Entities\Logging\ILogger.cs" />
     <Compile Include="Entities\Protocol\DataHoraHandler.cs" />
     <Compile Include="Entities\Protocol\EnergiaHandler.cs" />
-    <Compile Include="Entities\Driver\IOperations.cs" />
+    <Compile Include="Entities\Driver\Operacoes\IOperations.cs" />
     <Compile Include="Entities\Protocol\Message.cs" />
     <Compile Include="Entities\Protocol\RegistroHandler.cs" />
     <Compile Include="Entities\Protocol\SerieHandler.cs" />
@@ -63,9 +69,9 @@
     <Compile Include="Entities\Protocol\IOutputHandler.cs" />
     <Compile Include="Entities\Protocol\IMessageHandler.cs" />
     <Compile Include="Entities\Protocol\MessageHandler.cs" />
-    <Compile Include="Entities\Driver\Operations.cs" />
+    <Compile Include="Entities\Driver\Operacoes\Operations.cs" />
     <Compile Include="Entities\Protocol\Payload.cs" />
-    <Compile Include="Entities\Driver\RegistroStatusHandler.cs" />
+    <Compile Include="Entities\Driver\Operacoes\Handlers\LeituraDeRegistro\RegistroStatusHandler.cs" />
     <Compile Include="Entities\TCP\TCPHandler.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />

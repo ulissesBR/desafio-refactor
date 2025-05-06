@@ -13,7 +13,7 @@ namespace MedidorTCP.Entities.Protocol
             this.Data = new byte[payload.Length + 1];
             Array.Copy(payload, this.Data, payload.Length);
 
-            this.Checksum = payload.Checksum();
+            this.Checksum = payload.CalcularChecksum();
             this.Data[this.Data.Length - 1] = this.Checksum;
         }
     }

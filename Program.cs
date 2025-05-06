@@ -16,15 +16,15 @@ namespace MedidorTCP
         static void Main(string[] args)
         {
             /* Teste */
-            ArgumentData argumentData = new ArgumentData("20.232.142.24", "12167", "46036", "46244");
-            Run(argumentData);
+            //ArgumentData argumentData = new ArgumentData("20.232.142.24", "12167", "46036", "46244");
+            //Run(argumentData);
 
-            //ArrayList arguments = handleArguments(args);
+            ArrayList arguments = handleArguments(args);
 
-            //foreach (ArgumentData argument in arguments)
-            //{
-                //Run(argument);
-            //}
+            foreach (ArgumentData argument in arguments)
+            {
+                Run(argument);
+            }
         }
 
         private static void Run(ArgumentData arguments)
@@ -33,13 +33,15 @@ namespace MedidorTCP
             IOutputHandler outputHandler;
             IMessageHandler messageHandler;
             IOperations operations;
-            ILogger logger = new ConsoleLogger();
+            ILogger logger = new ConsoleLogger().WithContext(nameof(Program));
 
             LeituraDeMemoriaHandler leituraDeMemoriaHandler;
             Console.WriteLine("Conectando-se ao servidor ({0} - porta {1})... ", arguments.Ip, arguments.Port);
 
             try
             {
+                //int FirstIndex = 0, LastIndex = 0;
+
                 clientHandler = new TCPHandler(arguments.Ip, arguments.Port);
 
                 outputHandler = new CSVHandler("OutputEnergia");
@@ -50,15 +52,16 @@ namespace MedidorTCP
                 SerieHandler serieHandler = new SerieHandler(messageHandler, operations);
 
                 clientHandler.Connect();
-
+                //var registroStatusHandler = RegistroStatusHandler.LerRegistroStatus(messageHandler, operations);
                 var numeroDeSerie = serieHandler.LerNumeroDeSerie(); // Lemos o número de série primeiro
-                //operations.LerNumeroDeSerie(); 
                 Console.WriteLine("Número de série: " + numeroDeSerie);
 
+                //if (registroStatusHandler.IndiceAntigo > 0 && registroStatusHandler.IndiceNovo > 0)
                 if (arguments.FirstIndex > 0 && arguments.LastIndex > 0)
                 {
-                    leituraDeMemoriaHandler.LerMemoriaDeMassa((ushort)arguments.FirstIndex, (ushort)arguments.LastIndex);
-                    
+                    //leituraDeMemoriaHandler.LerMemoriaDeMassa(registroStatusHandler.IndiceAntigo, registroStatusHandler.IndiceNovo);
+                    leituraDeMemoriaHandler.LerMemoriaDeMassa(arguments.FirstIndex, arguments.LastIndex);
+
                     if (leituraDeMemoriaHandler.Registros.Count > 0)
                     {
                         outputHandler.Save(leituraDeMemoriaHandler.Registros, numeroDeSerie);
@@ -82,14 +85,26 @@ namespace MedidorTCP
 
         private static ArrayList handleArguments(String[] args)
         {
-            if (args.Length != 1)
+            ArrayList arguments = new ArrayList();
+
+            if (args.Length == 1)
             {
-                Console.WriteLine("Usage: MedidorTCP.exe nomeDoArquivo");
-                Environment.Exit(1);
+                return readFile(args[0]);
             }
-
-            return readFile(args[0]);
-
+            else if (args.Length == 4)
+            {
+                ArgumentData argument = new ArgumentData(args[0], args[1], args[2], args[3]);
+                arguments.Add(argument);
+                return arguments;
+            }
+            else
+            {
+                Console.WriteLine("Usage: ");
+                Console.WriteLine(" MedidorTCP.exe nome_do_arquivo.txt");
+                Console.WriteLine(" MedidorTCP.exe ip porta indice-inicial indice-final (separados por espaço).");
+                Environment.Exit(1);
+                return null;
+            }
         }
 
         private static ArrayList readFile(String fileName)

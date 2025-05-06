@@ -3,6 +3,7 @@ using MedidorTCP.Entities.Driver;
 using MedidorTCP.Entities.Enums;
 using MedidorTCP.Entities.Exceptions;
 using MedidorTCP.Entities.Logging;
+using static MedidorTCP.Entities.Enums.TipoMensagem;
 
 namespace MedidorTCP.Entities.Protocol
 {
@@ -12,7 +13,7 @@ namespace MedidorTCP.Entities.Protocol
         private readonly ILogger _logger;
         private readonly IOperations _operations;
 
-        private Mensagem _mensagemRecebida; // Mensagem recebida do medidor
+        private Mensagem mensagemRecebida; // Mensagem recebida do medidor
         public byte[] Energia { get; private set; }     // Valor da energia lida
 
 
@@ -31,11 +32,11 @@ namespace MedidorTCP.Entities.Protocol
             byte[] rawPayload = { 0x7D, 0x00, 0x05 };
             try
             {
-                _mensagemRecebida = _operations.TryExchangeMessage(_messageHandler, rawPayload, (int)FunctionLength.LerValorEnergiaLength);
+                mensagemRecebida = _operations.TryExchangeMessage(_messageHandler, rawPayload, (int)FunctionLength.LerValorEnergiaLength);
 
-                _logger.Info("Frame recebido: " + _mensagemRecebida);
+                _logger.Info("Frame recebido: " + mensagemRecebida);
 
-                if (_mensagemRecebida.IsValorEnergia)
+                if (mensagemRecebida.Tipo == ValorEnergiaTipo)
                 {
                     var energiaBytes = GetEnergia();
                     var energia = BitConverter.ToSingle(energiaBytes, 0);
@@ -57,7 +58,7 @@ namespace MedidorTCP.Entities.Protocol
         public byte[] GetEnergia()
         {
             byte[] energiaBytes = new byte[4];
-            Array.Copy(_mensagemRecebida.Buffer, 3, energiaBytes, 0, 4);
+            Array.Copy(mensagemRecebida.Buffer, 3, energiaBytes, 0, 4);
 
             // Se o sistema é little-endian, inverte a ordem dos bytes
             if (BitConverter.IsLittleEndian)
