@@ -1,0 +1,31 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio Version 17
+VisualStudioVersion = 17.13.35931.197
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MedidorTCP", "MedidorTCP\MedidorTCP.csproj", "{89A95012-E000-4389-815A-51EF16DE6BFB}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MedidorTCPTests", "MedidorTCPTests\MedidorTCPTests.csproj", "{35EE3670-2F93-43F6-8D51-B12126B1E05E}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{89A95012-E000-4389-815A-51EF16DE6BFB}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{89A95012-E000-4389-815A-51EF16DE6BFB}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{89A95012-E000-4389-815A-51EF16DE6BFB}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{89A95012-E000-4389-815A-51EF16DE6BFB}.Release|Any CPU.Build.0 = Release|Any CPU
+		{35EE3670-2F93-43F6-8D51-B12126B1E05E}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{35EE3670-2F93-43F6-8D51-B12126B1E05E}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{35EE3670-2F93-43F6-8D51-B12126B1E05E}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{35EE3670-2F93-43F6-8D51-B12126B1E05E}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {DEB12C0E-13CA-481A-AAAD-E2B0D7E6A0E7}
+	EndGlobalSection
+EndGlobal

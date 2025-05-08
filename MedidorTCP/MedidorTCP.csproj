@@ -1,0 +1,92 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <Import Project="$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props" Condition="Exists('$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props')" />
+  <PropertyGroup>
+    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
+    <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
+    <ProjectGuid>{89A95012-E000-4389-815A-51EF16DE6BFB}</ProjectGuid>
+    <OutputType>Exe</OutputType>
+    <AppDesignerFolder>Properties</AppDesignerFolder>
+    <RootNamespace>MedidorTCP</RootNamespace>
+    <AssemblyName>MedidorTCP</AssemblyName>
+    <TargetFrameworkVersion>v4.6.1</TargetFrameworkVersion>
+    <FileAlignment>512</FileAlignment>
+    <TargetFrameworkProfile />
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
+    <PlatformTarget>AnyCPU</PlatformTarget>
+    <DebugSymbols>true</DebugSymbols>
+    <DebugType>full</DebugType>
+    <Optimize>false</Optimize>
+    <OutputPath>bin\Debug\</OutputPath>
+    <DefineConstants>DEBUG;TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
+    <PlatformTarget>AnyCPU</PlatformTarget>
+    <DebugType>pdbonly</DebugType>
+    <Optimize>true</Optimize>
+    <OutputPath>bin\Release\</OutputPath>
+    <DefineConstants>TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+  </PropertyGroup>
+  <ItemGroup>
+    <Reference Include="System" />
+    <Reference Include="System.Core" />
+    <Reference Include="System.Drawing" />
+    <Reference Include="System.Windows.Forms" />
+    <Reference Include="System.Xml.Linq" />
+    <Reference Include="System.Data.DataSetExtensions" />
+    <Reference Include="Microsoft.CSharp" />
+    <Reference Include="System.Data" />
+    <Reference Include="System.Xml" />
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="Entities\Driver\BytesDeStatusDasMensagens\BytesStatus.cs" />
+    <Compile Include="Entities\Driver\Frame\CamposFixosDaMensagem.cs" />
+    <Compile Include="Entities\Driver\Frame\Frame.cs" />
+    <Compile Include="Entities\Driver\Frame\IdentificadorDeMensagem.cs" />
+    <Compile Include="Entities\Driver\FuncoesDasMensagens\FuncoesMensagem.cs" />
+    <Compile Include="Entities\Driver\Operacoes\Handlers\LeituraDeMemoria\LeituraDeMemoriaHandler.cs" />
+    <Compile Include="Entities\Driver\TamanhosDasMensagens\TamanhoMensagem.cs" />
+    <Compile Include="Entities\Enums\FunctionLength.cs" />
+    <Compile Include="Entities\Enums\TipoMensagem.cs" />
+    <Compile Include="Entities\Exceptions\MessageNotReceivedException.cs" />
+    <Compile Include="Entities\Logging\ConsoleLogger.cs" />
+    <Compile Include="Entities\Logging\ILogger.cs" />
+    <Compile Include="Entities\Protocol\Handlers\DataHoraHandler.cs" />
+    <Compile Include="Entities\Protocol\Handlers\EnergiaHandler.cs" />
+    <Compile Include="Entities\Driver\Operacoes\IOperations.cs" />
+    <Compile Include="Entities\Protocol\Mensagem\Message.cs" />
+    <Compile Include="Entities\Protocol\Handlers\RegistroHandler.cs" />
+    <Compile Include="Entities\Protocol\Handlers\SerieHandler.cs" />
+    <Compile Include="Entities\Exceptions\ChecksumMismatchException.cs" />
+    <Compile Include="Entities\UserInputHandle\ArgumentData.cs" />
+    <Compile Include="Entities\Driver\FileUtilities\CSVHandler.cs" />
+    <Compile Include="Entities\Helper\Extensions.cs" />
+    <Compile Include="Entities\TCP\IClientHandler.cs" />
+    <Compile Include="Entities\Protocol\Handlers\IOutputHandler.cs" />
+    <Compile Include="Entities\Protocol\Handlers\IMessageHandler.cs" />
+    <Compile Include="Entities\Protocol\Handlers\MessageHandler.cs" />
+    <Compile Include="Entities\Driver\Operacoes\Operations.cs" />
+    <Compile Include="Entities\Protocol\PayloadMensagem\Payload.cs" />
+    <Compile Include="Entities\Driver\Operacoes\Handlers\LeituraDeRegistro\RegistroStatusHandler.cs" />
+    <Compile Include="Entities\TCP\TCPHandler.cs" />
+    <Compile Include="Program.cs" />
+    <Compile Include="Properties\AssemblyInfo.cs" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="App.config" />
+  </ItemGroup>
+  <ItemGroup />
+  <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
+  <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
+       Other similar extension points exist, see Microsoft.Common.targets.
+  <Target Name="BeforeBuild">
+  </Target>
+  <Target Name="AfterBuild">
+  </Target>
+  -->
+</Project>
